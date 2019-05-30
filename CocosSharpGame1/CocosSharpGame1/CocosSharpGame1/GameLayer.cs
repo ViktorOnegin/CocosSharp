@@ -12,6 +12,7 @@ namespace CocosSharpGame1
         CCSprite paddleSprite;
         CCSprite ballSprite;
         CCLabel scoreLabel;
+        CCLabel gameOver;
 
         float ballXVelocity;
         float ballYVelocity;
@@ -41,6 +42,12 @@ namespace CocosSharpGame1
             scoreLabel.PositionY = 1000;
             scoreLabel.AnchorPoint = CCPoint.AnchorUpperLeft;
             AddChild(scoreLabel);
+
+            //GameOver
+            gameOver = new CCLabel("Game over!", "Arial", 40, CCLabelFormat.SystemFont); 
+            gameOver.PositionX = 300;
+            gameOver.PositionY = 1000;
+            gameOver.AnchorPoint = CCPoint.AnchorUpperLeft;
 
             // New code:
             Schedule(RunGameLogic);
@@ -73,6 +80,8 @@ namespace CocosSharpGame1
             // First let’s get the ball position:   
             float ballRight = ballSprite.BoundingBoxTransformedToParent.MaxX;
             float ballLeft = ballSprite.BoundingBoxTransformedToParent.MinX;
+            float ballTop = ballSprite.BoundingBoxTransformedToParent.MaxY;
+            float screenBottom = VisibleBoundsWorldspace.MinY;
             // Then let’s get the screen edges
             float screenRight = VisibleBoundsWorldspace.MaxX;
             float screenLeft = VisibleBoundsWorldspace.MinX;
@@ -83,6 +92,15 @@ namespace CocosSharpGame1
             if (shouldReflectXVelocity)
             {
                 ballXVelocity *= -1;
+            }
+            if (ballTop < screenBottom)
+            {
+               
+                ballSprite.PositionX = 320;
+                ballSprite.PositionY = 600;
+                scoreLabel.Text = "Your score:" + score;
+                AddChild(gameOver); 
+                Unschedule(RunGameLogic);
             }
         }
 
@@ -111,6 +129,7 @@ namespace CocosSharpGame1
             if (touches.Count > 0)
             {
                 // Perform touch handling here
+                Schedule(RunGameLogic);
             }
         }
 
