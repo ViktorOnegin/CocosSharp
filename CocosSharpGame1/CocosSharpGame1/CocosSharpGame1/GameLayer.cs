@@ -20,6 +20,7 @@ namespace CocosSharpGame1
         const float gravity = 140;
 
         int score;
+        
 
         public GameLayer() : base(CCColor4B.Black)
         {
@@ -81,24 +82,38 @@ namespace CocosSharpGame1
             float ballRight = ballSprite.BoundingBoxTransformedToParent.MaxX;
             float ballLeft = ballSprite.BoundingBoxTransformedToParent.MinX;
             float ballTop = ballSprite.BoundingBoxTransformedToParent.MaxY;
-            float screenBottom = VisibleBoundsWorldspace.MinY;
+            float ballBottom = ballSprite.BoundingBoxTransformedToParent.MaxY;
             // Then let’s get the screen edges
             float screenRight = VisibleBoundsWorldspace.MaxX;
             float screenLeft = VisibleBoundsWorldspace.MinX;
+            float screenTop = VisibleBoundsWorldspace.MaxY;
+            float screenBottom = VisibleBoundsWorldspace.MinY;
             // Check if the ball is either too far to the right or left:    
             bool shouldReflectXVelocity =
                 (ballRight > screenRight && ballXVelocity > 0) ||
                 (ballLeft < screenLeft && ballXVelocity < 0);
+
             if (shouldReflectXVelocity)
             {
                 ballXVelocity *= -1;
             }
+
+            bool shouldReflectYVelocity =
+                (ballTop > screenTop && ballYVelocity > 0) ||
+                (ballBottom < screenBottom && ballYVelocity < 0);
+
+            if (shouldReflectYVelocity)
+            {
+                ballYVelocity *= -1;
+            }
+
+
             if (ballTop < screenBottom)
             {
                
                 ballSprite.PositionX = 320;
                 ballSprite.PositionY = 600;
-                scoreLabel.Text = "Your score:" + score;
+                scoreLabel.Text = "Final score:" + score;
                 AddChild(gameOver); 
                 Unschedule(RunGameLogic);
             }
@@ -129,6 +144,9 @@ namespace CocosSharpGame1
             if (touches.Count > 0)
             {
                 // Perform touch handling here
+                RemoveChild(gameOver);
+                
+
                 Schedule(RunGameLogic);
             }
         }
